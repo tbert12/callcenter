@@ -16,7 +16,7 @@ class CallDispatcher {
 
     private EmployeeManager getManagerWithFreeEmployees() {
         EmployeeManager employeeManager = operators;
-        while (!employeeManager.existFreeEmployee()) {
+        while (!employeeManager.existFreeEmployee() && employeeManager.hasNextHierarchyLevel()) {
             employeeManager = employeeManager.getNextHierarchyLevel();
         }
         return employeeManager;
@@ -27,6 +27,7 @@ class CallDispatcher {
         // 2. If the operators are busy. Take supervisor
         // 3. If the supervisor are busy. Take director
         try {
+            LOGGER.info(String.format("New call to dispatch [%s]", call.toString()));
             EmployeeManager employeeManager = getManagerWithFreeEmployees();
             Employee employee = employeeManager.takeEmployee();
             LOGGER.info( String.format("Employee '%s' will take the call [%s]", employee.toString(), call.toString()) );

@@ -45,7 +45,9 @@ public class CallCenter {
 
         // 5. Define Semaphore to block if exceed number of call at the same time
         //      - Init Value: Number of employees
-        acceptCallsSemaphore = new Semaphore(getTotalEmployeesCount(operators));
+        int totalEmployees = getTotalEmployeesCount(operators);
+        acceptCallsSemaphore = new Semaphore(totalEmployees);
+        LOGGER.info(String.format("Initialized semaphore with %d permits", totalEmployees));
     }
 
     public CallCenter() {
@@ -53,57 +55,70 @@ public class CallCenter {
         incomingCalls = new ArrayBlockingQueue<>(INCOMING_CALLS_CAPACITY);
         incomingCallsExecutor = Executors.newFixedThreadPool(20);
         dispatchExecutor = Executors.newFixedThreadPool(20);
-        running.set(false);
+        running = new AtomicBoolean(false);
     }
 
-    private void call() {
+    public void call() {
         incomingCalls.add( new Call() );
     }
 
     private void waitCall() throws InterruptedException {
+        LOGGER.info("Waiting for free employee to answer a call");
         acceptCallsSemaphore.acquire();
+            LOGGER.info("Waiting new call");
             Call incomingCall = incomingCalls.take();
+            LOGGER.info(String.format("Incoming new call [%s]", incomingCall.toString()));
             dispatchExecutor.submit(() -> callDispatcher.dispatchCall(incomingCall));
         acceptCallsSemaphore.release();
     }
 
     public void start() {
         if (running.compareAndSet(false, true)) {
+            Semaphore starting = new Semaphore(0);
             incomingCallsExecutor.submit(() -> {
                 try {
+                    starting.release();
+                    LOGGER.info("Started CallCenter");
                     while (running.get()) {
                         waitCall();
                     }
                 } catch (InterruptedException e) {
-                    LOGGER.info("Interrupted calls listener");
-                    LOGGER.debug(e);
+                    LOGGER.info("End calls listener (interrupt signal)");
                 }
             });
+            try {
+                starting.acquire();
+            } catch (InterruptedException e) {
+                LOGGER.info("Interrupted the wait of start");
+            }
         }
     }
 
 
     public void stop() {
-        if (running.get()) {
+        if (!running.get()) {
+            LOGGER.info("OK. CallCenter is already stopped");
             return;
         }
-        LOGGER.info("Deleted wait calls");
+        LOGGER.info(String.format("OK. Deleted wait calls (%d)", incomingCalls.size()));
         incomingCalls.clear();
 
         LOGGER.info("Attempt to stop call receiver");
         running.set(false);
-        incomingCallsExecutor.shutdown();
 
         LOGGER.info("Waiting for answered calls to be finalized");
         dispatchExecutor.shutdown();
         try {
             dispatchExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-            LOGGER.info("Finalized all calls");
-            incomingCallsExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            LOGGER.info("OK. Finalized all calls");
         } catch (InterruptedException e) {
-            LOGGER.warn("Couldn't finish await termination of executors");
-            LOGGER.debug(e);
+            LOGGER.warn("Couldn't finish await termination of executors (interrupted)");
         }
-        LOGGER.info("CallCenter Stopped");
+        incomingCallsExecutor.shutdownNow();
+        LOGGER.info("OK. Stopped CallCenter");
+    }
+
+    public boolean isRunning() {
+        return running.get();
     }
 }
