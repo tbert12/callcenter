@@ -1,6 +1,4 @@
-package org.alm.tbert.tbert;
-
-import org.alm.tbert.callcenter.Call;
+package org.alm.tbert.callcenter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

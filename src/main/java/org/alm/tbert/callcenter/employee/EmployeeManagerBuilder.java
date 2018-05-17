@@ -28,45 +28,40 @@ public class EmployeeManagerBuilder {
         return this;
     }
 
-    private EmployeeManager build() throws EmployeeException {
-        EmployeeManager employeeManager = new EmployeeManager(type);
+    private EmployeeManager build() {
+        EmployeeManager employeeManager = (this.nextHierarchyLevel == null) ? new EmployeeManager(type) : new EmployeeManager(type, this.nextHierarchyLevel);
         for (int i = 0; i < nEmployees; i++) {
             employeeManager.addNewEmployee();
         }
-        employeeManager.setNextHierarchyLevel(this.nextHierarchyLevel);
         return employeeManager;
     }
 
-    private static EmployeeManagerBuilder newEmployeeManager(EmployeeType type, int nEmployees) {
+    private static EmployeeManager newEmployeeManager(EmployeeType type, int nEmployees, EmployeeManager next) {
         return new EmployeeManagerBuilder()
                 .setType(type)
-                .setNumberOfEmployees(nEmployees);
-    }
-
-    public static EmployeeManager newOperatorEmployeeManager(int nEmployees) throws EmployeeException {
-        return newEmployeeManager(EmployeeType.OPERATOR, nEmployees).build();
-    }
-
-    public static EmployeeManager newOperatorEmployeeManager(int nEmployees, EmployeeManager nextHierarchyLevel)
-            throws EmployeeException {
-        return newEmployeeManager(EmployeeType.OPERATOR, nEmployees)
-                .setNextHierarchyLevel(nextHierarchyLevel)
+                .setNumberOfEmployees(nEmployees)
+                .setNextHierarchyLevel(next)
                 .build();
     }
 
-    public static EmployeeManager newSupervisorEmployeeManager(int nEmployees) throws EmployeeException {
-        return newEmployeeManager(EmployeeType.SUPERVISOR, nEmployees).build();
+    public static EmployeeManager newOperatorEmployeeManager(int nEmployees) {
+        return newEmployeeManager(EmployeeType.OPERATOR, nEmployees, null);
     }
 
-    public static EmployeeManager newSupervisorEmployeeManager(int nEmployees, EmployeeManager nextHierarchyLevel)
-            throws EmployeeException {
-        return newEmployeeManager(EmployeeType.DIRECTOR, nEmployees)
-                .setNextHierarchyLevel(nextHierarchyLevel)
-                .build();
+    public static EmployeeManager newOperatorEmployeeManager(int nEmployees, EmployeeManager nextHierarchyLevel) {
+        return newEmployeeManager(EmployeeType.OPERATOR, nEmployees, nextHierarchyLevel);
     }
 
-    public static EmployeeManager newDirectorEmployeeManager(int nEmployees) throws EmployeeException {
-        return newEmployeeManager(EmployeeType.DIRECTOR, nEmployees).build();
+    public static EmployeeManager newSupervisorEmployeeManager(int nEmployees) {
+        return newEmployeeManager(EmployeeType.SUPERVISOR, nEmployees, null);
+    }
+
+    public static EmployeeManager newSupervisorEmployeeManager(int nEmployees, EmployeeManager nextHierarchyLevel) {
+        return newEmployeeManager(EmployeeType.DIRECTOR, nEmployees, nextHierarchyLevel);
+    }
+
+    public static EmployeeManager newDirectorEmployeeManager(int nEmployees) {
+        return newEmployeeManager(EmployeeType.DIRECTOR, nEmployees, null);
     }
 
 }

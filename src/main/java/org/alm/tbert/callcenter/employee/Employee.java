@@ -11,12 +11,15 @@ public class Employee {
 
     //---- DEBUG Attribute
     private final String _UUID;
+    private String _generateUUID() {
+        return UUID.randomUUID().toString().replace("-","");
+    }
     //----
 
     public Employee(EmployeeType type) {
         this.isFree = true;
         this.type = type;
-        this._UUID = UUID.randomUUID().toString().replace("-","");
+        this._UUID = _generateUUID();
     }
 
     public EmployeeType getType() {

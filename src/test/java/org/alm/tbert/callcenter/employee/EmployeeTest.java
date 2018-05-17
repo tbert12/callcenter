@@ -1,4 +1,4 @@
-package org.alm.tbert.tbert.employee;
+package org.alm.tbert.callcenter.employee;
 
 
 import static org.junit.Assert.assertEquals;
@@ -6,8 +6,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.alm.tbert.callcenter.Call;
-import org.alm.tbert.callcenter.employee.Employee;
-import org.alm.tbert.callcenter.employee.EmployeeType;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

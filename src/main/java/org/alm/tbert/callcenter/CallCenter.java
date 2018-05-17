@@ -2,8 +2,6 @@ package org.alm.tbert.callcenter;
 
 import org.alm.tbert.callcenter.employee.EmployeeManager;
 import org.alm.tbert.callcenter.employee.EmployeeManagerBuilder;
-import org.alm.tbert.callcenter.employee.exception.EmployeeException;
-import org.alm.tbert.callcenter.exception.CallCenterException;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.*;
@@ -31,7 +29,7 @@ public class CallCenter {
         return count + employeeManager.getNumberOfEmployees();
     }
 
-    private void constructor() throws EmployeeException {
+    private void constructor() {
         // 1. Employee Managers with Employees
         // 1.1 Directors
         EmployeeManager directors = EmployeeManagerBuilder.newDirectorEmployeeManager(10);
@@ -50,7 +48,7 @@ public class CallCenter {
         acceptCallsSemaphore = new Semaphore(getTotalEmployeesCount(operators));
     }
 
-    public CallCenter() throws CallCenterException {
+    public CallCenter() {
         constructor();
         incomingCalls = new ArrayBlockingQueue<>(INCOMING_CALLS_CAPACITY);
         incomingCallsExecutor = Executors.newFixedThreadPool(20);

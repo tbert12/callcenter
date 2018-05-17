@@ -11,9 +11,15 @@ public class EmployeeManager {
     private final EmployeeType employeeType;
 
     public EmployeeManager(EmployeeType type) {
-        freeEmployees = new ArrayList<>();
-        nextHierarchyLevel = null;
-        employeeType = type;
+        this.freeEmployees = new ArrayList<>();
+        this.nextHierarchyLevel = null;
+        this.employeeType = type;
+    }
+
+    public EmployeeManager(EmployeeType type, EmployeeManager nextHierarchyLevel) {
+        this.freeEmployees = new ArrayList<>();
+        this.nextHierarchyLevel = nextHierarchyLevel;
+        this.employeeType = type;
     }
 
     public int getNumberOfEmployees() {

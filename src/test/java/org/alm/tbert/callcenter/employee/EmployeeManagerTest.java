@@ -1,8 +1,4 @@
-package org.alm.tbert.tbert.employee;
-
-import org.alm.tbert.callcenter.employee.Employee;
-import org.alm.tbert.callcenter.employee.EmployeeManager;
-import org.alm.tbert.callcenter.employee.EmployeeType;
+package org.alm.tbert.callcenter.employee;
 
 import static org.junit.Assert.*;
 
@@ -50,6 +46,13 @@ public class EmployeeManagerTest {
     public void testAddDifferentTypeOfEmployee() throws EmployeeException {
         Employee operatorEmployee = new Employee(EmployeeType.OPERATOR);
         directors.add(operatorEmployee);
+    }
+
+    @Test
+    public void testNextHierarchyLevel() {
+        EmployeeManager newEmployeeManager = new EmployeeManager(EmployeeType.OPERATOR, supervisors);
+        assertTrue(newEmployeeManager.hasNextHierarchyLevel());
+        assertEquals(newEmployeeManager.getNextHierarchyLevel(), supervisors);
     }
 
     @Test(expected = EmployeeException.class)
