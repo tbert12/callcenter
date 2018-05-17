@@ -9,10 +9,12 @@ import org.alm.tbert.callcenter.Call;
 import org.alm.tbert.callcenter.employee.Employee;
 import org.alm.tbert.callcenter.employee.EmployeeType;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 
+import java.sql.Time;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +33,12 @@ public class EmployeeTest {
         executor = Executors.newScheduledThreadPool(5);
     }
 
+    @AfterClass
+    public static void endEmployeeTest() throws InterruptedException {
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+    }
+
     @Test
     public void testEmployeeNames() {
         assertEquals(operator.getType(), EmployeeType.OPERATOR);
@@ -43,17 +51,15 @@ public class EmployeeTest {
         assertTrue(operator.isFree());
         executor.submit(() -> {
             try {
-                operator.take( new Call(3) );
+                operator.take( new Call(2) );
             } catch (EmployeeException ignored) {
             }
         });
 
-        executor.scheduleWithFixedDelay(() -> {
-            assertFalse(operator.isFree());
-        }, 0, 1, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(() -> assertFalse(operator.isFree()), 0, 1, TimeUnit.SECONDS);
 
-        executor.shutdown();
-        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        TimeUnit.SECONDS.sleep(3);
+
         assertTrue(operator.isFree());
     }
 
@@ -66,5 +72,10 @@ public class EmployeeTest {
         });
         TimeUnit.SECONDS.sleep(1);
         operator.take( new Call(3) );
+
+        executor.shutdown();
+        executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+
+
     }
 }

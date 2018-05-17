@@ -23,8 +23,8 @@ public class CallTest {
 
     @Test
     public void testCallWithRandomDuration() {
-        assertTrue( callWithRandomDuration.getDuration() >= 5 );
-        assertTrue( callWithRandomDuration.getDuration() <= 10 );
+        assertTrue( callWithRandomDuration.getDuration() >= Call.MIN_DURATION_MINUTES );
+        assertTrue( callWithRandomDuration.getDuration() <= Call.MAX_DURATION_MINUTES );
     }
 
     @Test

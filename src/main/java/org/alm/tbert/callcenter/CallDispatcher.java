@@ -29,10 +29,13 @@ public class CallDispatcher {
         try {
             EmployeeManager employeeManager = getManagerWithFreeEmployees();
             Employee employee = employeeManager.takeEmployee();
+            LOGGER.info( String.format("Employee '%s' will take the call", employee.toString()) );
             employee.take(call);
             employeeManager.freeEmployee(employee);
+            LOGGER.info( String.format("Employee '%s' end the call", employee.toString()) );
         } catch (EmployeeException e) {
             LOGGER.error("Cannot dispatch call. No free employee");
+            LOGGER.debug(e);
         }
     }
 }

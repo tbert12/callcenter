@@ -9,8 +9,8 @@ public class Call {
     private static final Logger LOGGER = Logger.getLogger(Call.class);
     private static final Random RAND = new Random();
 
-    private static final int MIN_DURATION_MINUTES = 5;
-    private static final int MAX_DURATION_MINUTES = 10;
+    public static final int MIN_DURATION_MINUTES = 5;
+    public static final int MAX_DURATION_MINUTES = 10;
 
     private Integer duration;
 

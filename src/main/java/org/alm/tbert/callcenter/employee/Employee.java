@@ -4,15 +4,20 @@ import org.alm.tbert.callcenter.Call;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 import org.apache.log4j.Logger;
 
-public class Employee {
-    private static final Logger LOGGER = Logger.getLogger(Employee.class);
+import java.util.UUID;
 
+public class Employee {
     private final EmployeeType type;
     private boolean isFree;
+
+    //---- DEBUG Attribute
+    private final String _UUID;
+    //----
 
     public Employee(EmployeeType type) {
         this.isFree = true;
         this.type = type;
+        this._UUID = UUID.randomUUID().toString().replace("-","");
     }
 
     public EmployeeType getType() {
@@ -23,10 +28,8 @@ public class Employee {
         return this.isFree;
     }
 
-    public void answer(Call call) {
-        LOGGER.info(String.format("Employee type '%s' take call", this.getType()));
+    private void answer(Call call) {
         call.accept();
-        LOGGER.info(String.format("Employee type '%s' finish call successfully", this.getType()));
     }
 
     public void take(Call call) throws EmployeeException {
@@ -36,5 +39,10 @@ public class Employee {
         this.isFree = false;
         this.answer(call);
         this.isFree = true;
+    }
+
+    @Override
+    public String toString() {
+        return this.getType() + "::" + this._UUID;
     }
 }
