@@ -25,15 +25,20 @@ public class EmployeeManagerTest {
     @Test
     public void testFreeEmployees() throws EmployeeException {
         assertFalse(operators.existFreeEmployee());
+        assertEquals(operators.getNumberOfEmployees(), 0);
         operators.addNewEmployee();
+        assertEquals(operators.getNumberOfEmployees(), 1);
         assertTrue(operators.existFreeEmployee());
 
         Employee freeEmployee = operators.takeEmployee();
+        assertEquals(operators.getNumberOfEmployees(), 0);
         assertFalse(operators.existFreeEmployee());
         operators.freeEmployee(freeEmployee);
+        assertEquals(operators.getNumberOfEmployees(), 1);
         assertTrue(operators.existFreeEmployee());
 
         operators.addNewEmployee();
+        assertEquals(operators.getNumberOfEmployees(), 2);
         assertTrue(operators.existFreeEmployee());
         operators.takeEmployee();
         assertTrue(operators.existFreeEmployee());

@@ -1,7 +1,9 @@
 package org.alm.tbert.callcenter.employee.exception;
 
-public class EmployeeException extends Throwable {
-    public EmployeeException(String messsage) {
+import org.alm.tbert.callcenter.exception.CallCenterException;
 
+public class EmployeeException extends CallCenterException {
+    public EmployeeException(String message) {
+        super(message);
     }
 }

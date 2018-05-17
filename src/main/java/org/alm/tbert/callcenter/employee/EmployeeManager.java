@@ -16,6 +16,10 @@ public class EmployeeManager {
         employeeType = type;
     }
 
+    public int getNumberOfEmployees() {
+        return freeEmployees.size();
+    }
+
     private boolean isCircularHierarchy(EmployeeManager nextHierarchyLevel) {
         while (this != nextHierarchyLevel && nextHierarchyLevel != null) {
             nextHierarchyLevel = nextHierarchyLevel.getNextHierarchyLevel();
@@ -65,4 +69,7 @@ public class EmployeeManager {
     }
 
 
+    public EmployeeType getEmployeesType() {
+        return this.employeeType;
+    }
 }
