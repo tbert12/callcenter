@@ -5,7 +5,7 @@ import org.alm.tbert.callcenter.employee.EmployeeManager;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 import org.apache.log4j.Logger;
 
-public class CallDispatcher {
+class CallDispatcher {
     private static final Logger LOGGER = Logger.getLogger(CallDispatcher.class);
 
     private final EmployeeManager operators;

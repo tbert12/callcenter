@@ -37,7 +37,7 @@ public class EmployeeManagerBuilder {
         return employeeManager;
     }
 
-    private static EmployeeManagerBuilder newEmployeeManager(EmployeeType type, int nEmployees) throws EmployeeException {
+    private static EmployeeManagerBuilder newEmployeeManager(EmployeeType type, int nEmployees) {
         return new EmployeeManagerBuilder()
                 .setType(type)
                 .setNumberOfEmployees(nEmployees);

@@ -12,7 +12,7 @@ import org.junit.Test;
 public class CallTest {
     private static Call callWithRandomDuration;
     private static Call callWithDeclaredDuration;
-    private static int DURATION = 15;
+    private static final int DURATION = 15;
 
 
     @BeforeClass

@@ -12,7 +12,7 @@ public class Call {
     public static final int MIN_DURATION_MINUTES = 5;
     public static final int MAX_DURATION_MINUTES = 10;
 
-    private Integer duration;
+    private final Integer duration;
 
     public Call(int duration) {
         this.duration = duration;

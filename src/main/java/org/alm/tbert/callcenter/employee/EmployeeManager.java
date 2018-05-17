@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeeManager {
-    private List<Employee> freeEmployees;
+    private final List<Employee> freeEmployees;
     private EmployeeManager nextHierarchyLevel;
     private final EmployeeType employeeType;
 

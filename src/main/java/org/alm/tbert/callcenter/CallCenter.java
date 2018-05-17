@@ -1,9 +1,7 @@
 package org.alm.tbert.callcenter;
 
-import org.alm.tbert.callcenter.employee.Employee;
 import org.alm.tbert.callcenter.employee.EmployeeManager;
 import org.alm.tbert.callcenter.employee.EmployeeManagerBuilder;
-import org.alm.tbert.callcenter.employee.EmployeeType;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 import org.alm.tbert.callcenter.exception.CallCenterException;
 import org.apache.log4j.Logger;

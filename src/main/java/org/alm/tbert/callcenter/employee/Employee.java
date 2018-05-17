@@ -2,7 +2,6 @@ package org.alm.tbert.callcenter.employee;
 
 import org.alm.tbert.callcenter.Call;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
-import org.apache.log4j.Logger;
 
 import java.util.UUID;
 
