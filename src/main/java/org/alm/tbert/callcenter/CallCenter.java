@@ -158,7 +158,7 @@ public class CallCenter {
         return running.get();
     }
 
-    public synchronized int getNumberOfAnsweredCalls() {
+    public synchronized int getCountOfAnsweredCalls() {
         return numberOfAnsweredCalls;
     }
 }

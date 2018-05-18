@@ -39,7 +39,7 @@ public class CallCenterTest {
 
         callcenter.stopOnEndIncomingCalls();
 
-        assertEquals(callcenter.getNumberOfAnsweredCalls(), 1);
+        assertEquals(callcenter.getCountOfAnsweredCalls(), 1);
     }
 
     @Test
@@ -55,6 +55,6 @@ public class CallCenterTest {
         executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
         callcenter.stopOnEndIncomingCalls();
-        assertEquals(callcenter.getNumberOfAnsweredCalls(), NUMBER_CALLS);
+        assertEquals(callcenter.getCountOfAnsweredCalls(), NUMBER_CALLS);
     }
 }
