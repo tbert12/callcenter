@@ -2,7 +2,7 @@
  
  
 ## Diagrama de Clases 
-![logo](img/CallCenter.png) 
+![Diagrama de clases](img/CallCenter.png) 
  
 ## Diseño 
  
