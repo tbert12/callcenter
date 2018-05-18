@@ -57,7 +57,7 @@ public class EmployeeManagerBuilder {
     }
 
     public static EmployeeManager newSupervisorEmployeeManager(int nEmployees, EmployeeManager nextHierarchyLevel) {
-        return newEmployeeManager(EmployeeType.DIRECTOR, nEmployees, nextHierarchyLevel);
+        return newEmployeeManager(EmployeeType.SUPERVISOR, nEmployees, nextHierarchyLevel);
     }
 
     public static EmployeeManager newDirectorEmployeeManager(int nEmployees) {

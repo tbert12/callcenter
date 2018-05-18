@@ -4,6 +4,9 @@ import org.alm.tbert.callcenter.employee.EmployeeManager;
 import org.alm.tbert.callcenter.employee.EmployeeManagerBuilder;
 import org.apache.log4j.Logger;
 
+import java.sql.Time;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -11,13 +14,15 @@ public class CallCenter {
     private static final Logger LOGGER = Logger.getLogger(CallCenter.class);
 
     private static final int INCOMING_CALLS_CAPACITY = 100;
-    private ArrayBlockingQueue<Call> incomingCalls;
+    private final ArrayBlockingQueue<Call> incomingCalls;
     private CallDispatcher callDispatcher;
 
     private Semaphore acceptCallsSemaphore;
     private AtomicBoolean running;
     private ExecutorService incomingCallsExecutor;
     private ExecutorService dispatchExecutor;
+
+    private volatile int numberOfAnsweredCalls;
 
     private int getTotalEmployeesCount(EmployeeManager firstEmployeeLevel) {
         EmployeeManager employeeManager = firstEmployeeLevel;
@@ -32,13 +37,13 @@ public class CallCenter {
     private void constructor() {
         // 1. Employee Managers with Employees
         // 1.1 Directors
-        EmployeeManager directors = EmployeeManagerBuilder.newDirectorEmployeeManager(10);
+        EmployeeManager directors = EmployeeManagerBuilder.newDirectorEmployeeManager(2);
 
         // 1.2 Supervisors (with directors as next hierarchy level)
-        EmployeeManager supervisors = EmployeeManagerBuilder.newSupervisorEmployeeManager(10, directors);
+        EmployeeManager supervisors = EmployeeManagerBuilder.newSupervisorEmployeeManager(2, directors);
 
         // 1.3 Operators (with supervisors as next hierarchy level)
-        EmployeeManager operators = EmployeeManagerBuilder.newOperatorEmployeeManager(10, supervisors);
+        EmployeeManager operators = EmployeeManagerBuilder.newOperatorEmployeeManager(2, supervisors);
 
         // 4. Create Dispatcher with first level
         callDispatcher = new CallDispatcher(operators);
@@ -55,21 +60,33 @@ public class CallCenter {
         incomingCalls = new ArrayBlockingQueue<>(INCOMING_CALLS_CAPACITY);
         incomingCallsExecutor = Executors.newFixedThreadPool(20);
         dispatchExecutor = Executors.newFixedThreadPool(20);
+        numberOfAnsweredCalls = 0;
         running = new AtomicBoolean(false);
     }
 
     public void call() {
-        incomingCalls.add( new Call() );
+        Call call = new Call();
+        LOGGER.info(String.format("Added new Call [%s]", call.toString()));
+        incomingCalls.add( call );
+    }
+
+    private synchronized Call takeCall() throws InterruptedException {
+        Call incomingCall = incomingCalls.take();
+        LOGGER.debug("-- QUEUE SIZE: " + incomingCalls.size() + " --");
+        numberOfAnsweredCalls++;
+        return incomingCall;
     }
 
     private void waitCall() throws InterruptedException {
         LOGGER.info("Waiting for free employee to answer a call");
         acceptCallsSemaphore.acquire();
-            LOGGER.info("Waiting new call");
-            Call incomingCall = incomingCalls.take();
-            LOGGER.info(String.format("Incoming new call [%s]", incomingCall.toString()));
-            dispatchExecutor.submit(() -> callDispatcher.dispatchCall(incomingCall));
-        acceptCallsSemaphore.release();
+        LOGGER.info("Waiting new call");
+        Call call = takeCall();
+        LOGGER.info(String.format("Incoming new call [%s]", call.toString()));
+        dispatchExecutor.submit(() -> {
+            callDispatcher.dispatchCall(call);
+            acceptCallsSemaphore.release();
+        });
     }
 
     public void start() {
@@ -118,7 +135,30 @@ public class CallCenter {
         LOGGER.info("OK. Stopped CallCenter");
     }
 
+    public void stopOnEndIncomingCalls() throws InterruptedException {
+        Timer timer = new Timer();
+        Semaphore semaphore = new Semaphore(0);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                LOGGER.info("Check incoming calls to stop (" + incomingCalls.size() + ")");
+                if (incomingCalls.isEmpty()) {
+                    LOGGER.info("No incoming call. Trigger stop");
+                    timer.cancel();
+                    stop();
+                    semaphore.release();
+                }
+            }
+        }, 0, 1000);
+        semaphore.acquire();
+
+    }
+
     public boolean isRunning() {
         return running.get();
+    }
+
+    public synchronized int getNumberOfAnsweredCalls() {
+        return numberOfAnsweredCalls;
     }
 }

@@ -2,23 +2,24 @@ package org.alm.tbert.callcenter;
 
 import static org.junit.Assert.*;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class CallCenterTest {
     private static CallCenter callcenter;
+    private static final int NUMBER_CALLS = 10;
 
-    @BeforeClass
-    public static void initCallCenterTest() {
+    @Before
+    public void onInitCallCenterTest() {
         callcenter = new CallCenter();
     }
 
-    @AfterClass
-    public static void endCallCenterTest() {
-        //callcenter.stop();
+    @After
+    public void onEndCallCenterTest() {
+        callcenter.stop();
     }
 
     @Test
@@ -33,8 +34,27 @@ public class CallCenterTest {
     @Test
     public void testCallCenterWithOneCall() throws InterruptedException {
         callcenter.start();
+
         callcenter.call();
-        TimeUnit.SECONDS.sleep(1);
-        callcenter.stop();
+
+        callcenter.stopOnEndIncomingCalls();
+
+        assertEquals(callcenter.getNumberOfAnsweredCalls(), 1);
+    }
+
+    @Test
+    public void testCallCenterWithTenParallelCalls() throws InterruptedException {
+        callcenter.start();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_CALLS);
+        for (int i = 0; i < NUMBER_CALLS; i++) {
+            executorService.submit(() -> callcenter.call());
+        }
+
+        executorService.shutdown();
+        executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+
+        callcenter.stopOnEndIncomingCalls();
+        assertEquals(callcenter.getNumberOfAnsweredCalls(), NUMBER_CALLS);
     }
 }

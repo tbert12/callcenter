@@ -3,6 +3,7 @@ package org.alm.tbert.callcenter.employee;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EmployeeManager {
@@ -10,14 +11,14 @@ public class EmployeeManager {
     private EmployeeManager nextHierarchyLevel;
     private final EmployeeType employeeType;
 
-    public EmployeeManager(EmployeeType type) {
+    EmployeeManager(EmployeeType type) {
         this.freeEmployees = new ArrayList<>();
         this.nextHierarchyLevel = null;
         this.employeeType = type;
     }
 
-    public EmployeeManager(EmployeeType type, EmployeeManager nextHierarchyLevel) {
-        this.freeEmployees = new ArrayList<>();
+    EmployeeManager(EmployeeType type, EmployeeManager nextHierarchyLevel) {
+        this.freeEmployees = Collections.synchronizedList(new ArrayList<>());
         this.nextHierarchyLevel = nextHierarchyLevel;
         this.employeeType = type;
     }
@@ -33,7 +34,7 @@ public class EmployeeManager {
         return nextHierarchyLevel != null;
     }
 
-    public void setNextHierarchyLevel(EmployeeManager nextHierarchyLevel) throws EmployeeException {
+    void setNextHierarchyLevel(EmployeeManager nextHierarchyLevel) throws EmployeeException {
         if (isCircularHierarchy(nextHierarchyLevel)) {
             throw new EmployeeException("Circular Hierarchy level");
         }
@@ -48,11 +49,11 @@ public class EmployeeManager {
         return nextHierarchyLevel != null;
     }
 
-    public void addNewEmployee() {
+    void addNewEmployee() {
         freeEmployees.add( new Employee(employeeType) );
     }
 
-    public void add(Employee employee) throws EmployeeException {
+    void add(Employee employee) throws EmployeeException {
         if (employee.getType() != employeeType) {
             throw new EmployeeException(String.format("Only accept employee with type %s", employeeType));
         }
@@ -75,7 +76,7 @@ public class EmployeeManager {
     }
 
 
-    public EmployeeType getEmployeesType() {
+    EmployeeType getEmployeesType() {
         return this.employeeType;
     }
 }

@@ -3,16 +3,16 @@ package org.alm.tbert.callcenter.employee;
 import org.alm.tbert.callcenter.Call;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 
-import java.util.UUID;
-
 public class Employee {
     private final EmployeeType type;
     private boolean isFree;
 
     //---- DEBUG Attribute
+    private static int _uuid = 0;
     private final String _UUID;
     private String _generateUUID() {
-        return UUID.randomUUID().toString().replace("-","");
+        _uuid++;
+        return String.valueOf(_uuid);
     }
     //----
 
@@ -22,11 +22,11 @@ public class Employee {
         this._UUID = _generateUUID();
     }
 
-    public EmployeeType getType() {
+    EmployeeType getType() {
         return this.type;
     }
 
-    public boolean isFree() {
+    boolean isFree() {
         return this.isFree;
     }
 
