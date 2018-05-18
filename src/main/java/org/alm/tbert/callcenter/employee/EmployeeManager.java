@@ -12,7 +12,7 @@ public class EmployeeManager {
     private final EmployeeType employeeType;
 
     EmployeeManager(EmployeeType type) {
-        this.freeEmployees = new ArrayList<>();
+        this.freeEmployees = Collections.synchronizedList(new ArrayList<>());
         this.nextHierarchyLevel = null;
         this.employeeType = type;
     }
