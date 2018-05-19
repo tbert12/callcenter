@@ -49,6 +49,7 @@ public class EmployeeManager {
         return nextHierarchyLevel != null;
     }
 
+
     void addNewEmployee() {
         freeEmployees.add( new Employee(employeeType) );
     }
@@ -78,5 +79,21 @@ public class EmployeeManager {
 
     EmployeeType getEmployeesType() {
         return this.employeeType;
+    }
+
+    public int countTotalEmployees() {
+        int nextHierarchyLevelCount = this.hasNextHierarchyLevel() ? this.getNextHierarchyLevel().getNumberOfEmployees() : 0;
+        return this.getNumberOfEmployees() + nextHierarchyLevelCount;
+    }
+
+    public EmployeeManager getAvailableEmployeeManager() throws EmployeeException {
+        if (existFreeEmployee()) {
+            return this;
+        }
+        if (hasNextHierarchyLevel()) {
+            return getNextHierarchyLevel().getAvailableEmployeeManager();
+        }
+        throw new EmployeeException("No available Employee Manager");
+
     }
 }

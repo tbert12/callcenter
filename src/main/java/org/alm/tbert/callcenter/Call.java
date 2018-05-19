@@ -3,6 +3,7 @@ package org.alm.tbert.callcenter;
 import org.apache.log4j.Logger;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +49,9 @@ public class Call {
         summary = String.format("start: %d:%d | end: %d:%d", start.getMinute(), start.getSecond(), end.getMinute(), end.getSecond());
     }
 
+    public static int compare(Call call1, Call call2) {
+        return call1._UUID.compareTo(call2._UUID);
+    }
 
     int getDuration() {
         return duration;

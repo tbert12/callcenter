@@ -23,18 +23,7 @@ public class CallCenterTest {
     }
 
     @Test
-    public void testCallCenter() {
-        assertFalse(callcenter.isRunning());
-        callcenter.start();
-        assertTrue(callcenter.isRunning());
-        callcenter.stop();
-        assertFalse(callcenter.isRunning());
-    }
-
-    @Test
-    public void testCallCenterWithOneCall() throws InterruptedException {
-        callcenter.start();
-
+    public void testCallCenterWithOneCall() {
         callcenter.call();
 
         callcenter.stopOnEndIncomingCalls();
@@ -44,8 +33,6 @@ public class CallCenterTest {
 
     @Test
     public void testCallCenterWithTenParallelCalls() throws InterruptedException {
-        callcenter.start();
-
         ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_CALLS);
         for (int i = 0; i < NUMBER_CALLS; i++) {
             executorService.submit(() -> callcenter.call());
