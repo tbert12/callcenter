@@ -19,7 +19,7 @@ Se toma como requerimiento que el limitante de llamadas que se pueden despachar 
 
 
 ##### CallCenter 
-Se implemento la clase **CallCenter** con el fin de abstraer en una capa la integración de todo el sistema. Esta se encarga de la construcción de todos los empleados (**EmployeesManager**) y el nivel jerárquicos. Además, instancia al **CallDispatcher** con sus parametros correspondientes. Con este nivel de abstracción logra realizar probar de una forma mas sencilla todo el sistema en conjunto con sus casos bordes. 
+Se implemento la clase **CallCenter** con el fin de abstraer en una capa la integración de todo el sistema. Esta se encarga de la construcción de todos los empleados (**EmployeesManager**) y el nivel jerárquicos. Además, instancia al **CallDispatcher** con sus parametros correspondientes. Con este nivel de abstracción se logra realizar pruebas de una forma mas sencilla de todo el sistema en conjunto y sus casos bordes. 
  
 ## Extras 
 
