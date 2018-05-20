@@ -3,7 +3,6 @@ package org.alm.tbert.callcenter;
 import org.apache.log4j.Logger;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
