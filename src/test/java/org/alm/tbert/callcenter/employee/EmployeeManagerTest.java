@@ -67,4 +67,33 @@ public class EmployeeManagerTest {
         directors.setNextHierarchyLevel(operators);
 
     }
+
+    @Test(expected = EmployeeException.class)
+    public void testAvailableEmployeeManager() throws EmployeeException {
+        EmployeeManager operators = new EmployeeManager(EmployeeType.OPERATOR);
+        operators.addNewEmployee();
+
+        EmployeeManager supervisors = new EmployeeManager(EmployeeType.SUPERVISOR);
+        supervisors.addNewEmployee();
+
+        EmployeeManager directors = new EmployeeManager(EmployeeType.DIRECTOR);
+        directors.addNewEmployee();
+
+        operators.setNextHierarchyLevel(supervisors);
+        supervisors.setNextHierarchyLevel(directors);
+
+        EmployeeManager available = operators.getAvailableEmployeeManager();
+        assertEquals(available, operators);
+        assertEquals(available.takeEmployee().getType(),EmployeeType.OPERATOR);
+
+        available = operators.getAvailableEmployeeManager();
+        assertEquals(available, supervisors);
+        assertEquals(available.takeEmployee().getType(),EmployeeType.SUPERVISOR);
+
+        available = operators.getAvailableEmployeeManager();
+        assertEquals(available, directors);
+        assertEquals(available.takeEmployee().getType(),EmployeeType.DIRECTOR);
+
+        operators.getAvailableEmployeeManager();
+    }
 }

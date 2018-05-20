@@ -23,7 +23,7 @@ public class EmployeeManager {
         this.employeeType = type;
     }
 
-    private int getNumberOfEmployees() {
+    int getNumberOfEmployees() {
         return freeEmployees.size();
     }
 
@@ -41,11 +41,11 @@ public class EmployeeManager {
         this.nextHierarchyLevel = nextHierarchyLevel;
     }
 
-    private EmployeeManager getNextHierarchyLevel() {
+    EmployeeManager getNextHierarchyLevel() {
         return this.nextHierarchyLevel;
     }
 
-    private boolean hasNextHierarchyLevel() {
+    boolean hasNextHierarchyLevel() {
         return nextHierarchyLevel != null;
     }
 
@@ -61,7 +61,7 @@ public class EmployeeManager {
         freeEmployees.add(employee);
     }
 
-    private synchronized boolean existFreeEmployee() {
+    synchronized boolean existFreeEmployee() {
         return !freeEmployees.isEmpty();
     }
 
