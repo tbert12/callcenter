@@ -2,7 +2,7 @@
 ##### Tomás A. Bert
  
 ## Diagrama de Clases 
-![Diagrama de clases](img/CallCenter.png) 
+![Diagrama de clases](img/CallCenter_BlockingQueue.png) 
  
 ## Diseño 
  
@@ -11,11 +11,11 @@ Se pensó el diseño a partir de dos requerimientos que se consideraron importan
  
 - "La clase Dispatcher debe tener la capacidad de poder procesar 10 llamadas al mismo tiempo (de modo concurrente)." 
  
-Respecto al primer requerimiento se optó por una solución basada en el patrón *"chain of responsability"* implementando la clase **EmployeeManager**. Esta clase contiene un conjunto de empleados del mismo tipo y a su vez una instancia a otro **EmployeeManager** para delegarle la responsabilidad en caso de que no haya empleados desocupados. Por lo tanto, el *dispatcher*, cuando debe despachar una llamada, teniendo como referencia el nivel jerárquico más bajo, le pide el nivel jerarquico más próximo con disponibilidad. Una vez conseguido, toma el empleado y le asigna la llamada cumpliendo con el despacho. 
- 
-Para el segundo requerimiento, el enfoque de la solución debe ser concurrente. Esto quiere decir que se debe pensar que el acceso a los recursos debe ser seguro (*thread-safe*). Para ello se utilizan las [herramientas que nos provee Java 8](https://docs.oracle.com/javase/8/docs/technotes/guides/concurrency/index.html) tales como *synchronize*, *synchronizedList*, tipos atómicos, entre otros. 
+Para ambos requerimientos se optó por utilizar Executors y *PriorityBlockingQueue* dentro del *dispatcher*.
+Por cada llamada que se despacha se hace ``submit`` en el ExecutorService, creando un nuevo hilo que toma desde la cola de prioridad un empleado (si no hay empleados, el hilo se bloeque hasta que haya uno). Una vez que se toma el empleado, se le asigna la llamada y luego se lo devuelve a la cola.
 
-La clase **CallDispatcher** se comporta como un servidor concurrente. Al momento de instanciarlo (`new CallDipatcher`) se crea un hilo que consume mensajes - dentro de un ciclo - desde una cola con prioridad bloqueante (`PriorityBlockingQueue`). Cuando se llama al metodo para despachar una llamada (`dispatchCall`) solo se introduce la llamada en la cola para que luego el hilo que esta consuminedo tome la llamada, crea un nuevo hilo para seleccionar al empleado al que se la asignará la llamada e inmediatamente sigue consumiendo de la cola.
+Respecto a la cola de prioridad, esta contiene empleados. El orden es definido por el tipo de empelado, por lo tanto, la clase **Employee** implementa la interface ``Comparable``. El orden de prioridad de los empleados es tal cual se especifica en el enunciado: primero los operados, luego los supervisores y por último los directores.
+
 Se toma como requerimiento que el limitante de llamadas que se pueden despachar al mismo tiempo sean solo 10.
 
 
@@ -25,10 +25,10 @@ Se implemento la clase **CallCenter** con el fin de abstraer en una capa la inte
 ## Extras 
 
 #### "Dar alguna solución sobre qué pasa con una llamada cuando entran más de 10 llamadas concurrentes." 
-La problemática citada se resuelve dentro del **CallDispatcher** insertando un semáforo al estilo productor-consumidor con *buffer*, donde inicialmente su valor (`permits`) se define con el parámetro de cuantas llamadas se pueden despachar simultaneamente, que es parte del contructor de la clase. Entonces, se hace `acquire` al semáforo previo a tomar un mensaje de la cola bloqueante y el `realease` posterior a que el mensaje se consuma, es decir, haya sido despachado y tomado por un empleado hasta su finalización. Por lo tanto, si ingresan mas de 10 (o el valor que se paso por parametro) llamadas simultaneas, el semaforo bloqueara el hilo que consume de la cola.
+Cuando se crea el *executor service* se asigna como parametro cuantos hilos puede correr el mismo. Si la cantidad de llamadas a despachar simultaneamente es mas mayor a la cantidad de hilos disponible (cada llamada requiere un hilo), el Executor se encarga de encolar el hilo para que cuando finalizen la ejecucion de otro hilo (finalización de llamada) se ejecute el hilo que está a la espera.
 
 #### "Dar alguna solución sobre qué pasa con una llamada cuando no hay ningún empleado libre."   
-Su utiliza el método de la solución al item anterior, donde el valor inicial del semaforo (`permits`), en este caso, es el mínimo entre la cantidad de empleados que hay en el CallCenter y el parámetro de la cantidad de llamadas en simultaneo permitidas. Este número es obtenido desde la instancia al **EmployeeManager** que se le provee al **CallDispatcher**
+``PriorityBlockingQueue`` es una estructura de sincronización (concurrencia). Si un hilo hace ``take()`` y la cola está vacia, se bloquea hasta que haya un elemento, empleado en este caso.
 
 
 #### Otros 

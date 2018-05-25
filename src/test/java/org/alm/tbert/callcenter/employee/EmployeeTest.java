@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
+import java.util.PriorityQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -45,19 +46,19 @@ public class EmployeeTest {
 
     @Test
     public void testEmployeeCallIsNotFree() throws InterruptedException {
-        assertTrue(operator.isFree());
+        assertTrue(director.isFree());
         executor.submit(() -> {
             try {
-                operator.take( new Call(2) );
+                director.take( new Call(2) );
             } catch (EmployeeException ignored) {
             }
         });
 
-        executor.scheduleWithFixedDelay(() -> assertFalse(operator.isFree()), 0, 1, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(() -> assertFalse(director.isFree()), 0, 1, TimeUnit.SECONDS);
 
         TimeUnit.SECONDS.sleep(3);
 
-        assertTrue(operator.isFree());
+        assertTrue(director.isFree());
     }
 
     @Test(expected = EmployeeException.class)
@@ -73,6 +74,29 @@ public class EmployeeTest {
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
 
+        TimeUnit.SECONDS.sleep(3);
+        assertTrue(operator.isFree());
 
+    }
+
+    @Test
+    public void testEmployeeComparator() {
+        Employee otherSupervisor = new Employee(EmployeeType.SUPERVISOR);
+        assertEquals(0, supervisor.compareTo(otherSupervisor));
+
+        assertEquals(-1, operator.compareTo(supervisor));
+        assertEquals(-1, operator.compareTo(director));
+        assertEquals(-1, supervisor.compareTo(director));
+
+        assertEquals(1, supervisor.compareTo(operator));
+        assertEquals(1, director.compareTo(supervisor));
+
+        PriorityQueue<Employee> employees = new PriorityQueue<>();
+        employees.add(supervisor);
+        employees.add(director);
+        employees.add(operator);
+        assertEquals(operator, employees.poll());
+        assertEquals(supervisor, employees.poll());
+        assertEquals(director, employees.poll());
     }
 }

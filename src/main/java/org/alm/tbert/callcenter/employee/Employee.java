@@ -3,7 +3,7 @@ package org.alm.tbert.callcenter.employee;
 import org.alm.tbert.callcenter.Call;
 import org.alm.tbert.callcenter.employee.exception.EmployeeException;
 
-public class Employee {
+public class Employee implements Comparable<Employee> {
     private final EmployeeType type;
     private boolean isFree;
 
@@ -46,5 +46,13 @@ public class Employee {
     @Override
     public String toString() {
         return this.getType() + "::" + this._UUID;
+    }
+
+    @Override
+    public int compareTo(Employee o) {
+        if (this.type == o.type) {
+            return 0;
+        }
+        return this.type.ordinal() < o.type.ordinal() ? -1 : 1;
     }
 }

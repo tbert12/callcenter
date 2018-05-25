@@ -38,18 +38,18 @@ public class CallTest {
         Call call1 = new Call();
         Call call2 = new Call();
         Call call3 = new Call();
-        assertEquals(Call.compare(call1, call1), 0);
-        assertEquals(Call.compare(call1, call2), -1);
-        assertEquals(Call.compare(call2, call3), -1);
-        assertEquals(Call.compare(call3, call2), 1);
+
+        assertEquals(-1, call1.compareTo(call2));
+        assertEquals(-1, call2.compareTo(call3));
+        assertEquals(1, call3.compareTo(call2));
 
         Call[] calls = {call2, call3, call1};
-        Arrays.sort(calls, Call::compare);
+        Arrays.sort(calls);
         assertEquals(calls[0], call1);
         assertEquals(calls[1], call2);
         assertEquals(calls[2], call3);
 
-        PriorityQueue<Call> priorityCalls = new PriorityQueue<>(Call::compare);
+        PriorityQueue<Call> priorityCalls = new PriorityQueue<>();
         priorityCalls.add(call3);
         priorityCalls.add(call1);
         priorityCalls.add(call2);

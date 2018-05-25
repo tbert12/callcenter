@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class Call {
+public class Call implements Comparable<Call> {
     private static final Logger LOGGER = Logger.getLogger(Call.class);
     private static final Random RAND = new Random();
 
@@ -48,15 +48,16 @@ public class Call {
         summary = String.format("start: %d:%d | end: %d:%d", start.getMinute(), start.getSecond(), end.getMinute(), end.getSecond());
     }
 
-    public static int compare(Call call1, Call call2) {
-        return call1._UUID.compareTo(call2._UUID);
-    }
-
     int getDuration() {
         return duration;
     }
 
     public String toString() {
         return summary.length() == 0 ? this._UUID : String.format("%s - %s",this._UUID, this.summary);
+    }
+
+    @Override
+    public int compareTo(Call o) {
+        return this._UUID.compareTo(o._UUID);
     }
 }
